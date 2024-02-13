@@ -84,7 +84,7 @@ namespace rfid
                 var update = Builders<BsonDocument>.Update.Push("attendance", new BsonDocument
         {
             { "dateTime", DateTime.Now },
-            { "subname", subname }
+            { "subname", subname.ToUpper() }
         }); // Add an object containing dateTime and subname to the attendance array
                 collection.UpdateOne(updateFilter, update);
 
