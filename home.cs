@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,5 +33,18 @@ namespace rfid
             // Optionally, you can hide the current form
             this.Hide();
         }
+
+
+        private void home_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Check if the form is closing intentionally (not due to Application.Exit())
+            if (e.CloseReason != CloseReason.ApplicationExitCall)
+            {
+                // Hide the form instead of closing it
+                e.Cancel = true;
+                this.Hide();
+            }
+        }
     }
 }
+

@@ -118,6 +118,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "home";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            //this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.home_FormClosed);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel1.ResumeLayout(false);

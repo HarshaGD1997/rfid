@@ -88,6 +88,11 @@ namespace rfid
         }); // Add an object containing dateTime and subname to the attendance array
                 collection.UpdateOne(updateFilter, update);
 
+                // Update textbox1 with the name
+                UpdateTextBox(textBox1, document["name"].AsString);
+                // Update textbox2 with "Success"
+                UpdateTextBox(textBox2, "Success");
+
                 return document["name"].AsString;
             }
             else
@@ -97,7 +102,6 @@ namespace rfid
             }
         }
 
-
         private void UpdateTextBox(string text)
         {
             if (InvokeRequired)
@@ -105,27 +109,44 @@ namespace rfid
                 Invoke(new Action<string>(UpdateTextBox), text);
                 return;
             }
-            textBox1.Text = text;
+            textBox1.Text = text; // Display the name in textbox1
         }
 
-
+        private void UpdateTextBox(TextBox textBox, string text)
+        {
+            if (textBox.InvokeRequired)
+            {
+                textBox.Invoke(new Action<TextBox, string>(UpdateTextBox), textBox, text);
+                return;
+            }
+            textBox.Text = text;
+        }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (serialPort != null && serialPort.IsOpen)
+            // Check if Form1 is being closed intentionally
+            if (this.Visible)
             {
-                serialPort.Close();
+                // Close the serial port
+                if (serialPort != null && serialPort.IsOpen)
+                {
+                    serialPort.Close();
+                }
+
+                // Exit the application
+                Application.Exit();
             }
-
-            Application.Exit();
         }
 
-        protected override void OnFormClosed(FormClosedEventArgs e)
+
+
+        private void button1_Click(object sender, EventArgs e)
         {
-            base.OnFormClosed(e);
-            // Unsubscribe from the event handler to prevent memory leaks
-            this.FormClosing -= Form1_FormClosing;
-        }
+            home homepage = new home();
 
+            homepage.Show();
+
+            this.Hide();
+        }
     }
 }
