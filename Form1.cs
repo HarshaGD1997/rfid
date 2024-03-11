@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Bson;
 using System.Text;
 using System.Linq;
+using System.IO;
 
 namespace rfid
 {
@@ -21,15 +22,18 @@ namespace rfid
 
             try
             {
-                // MongoDB connection string
-                string connectionString = "mongodb+srv://harsha:harsha01@rfid.efilaqh.mongodb.net/?retryWrites=true&w=majority";
+                string jsonString = File.ReadAllText("E:\\arduino-nano\\rfid_app\\rfid\\appsettings.json");
+
+                int startIndex = jsonString.IndexOf("ConnectionString") + "ConnectionString".Length + 4; // Add 4 for ": ": characters
+                int endIndex = jsonString.IndexOf('"', startIndex);
+
+                string connectionString = jsonString.Substring(startIndex, endIndex - startIndex);
+
                 MongoClientSettings settings = MongoClientSettings.FromConnectionString(connectionString);
                 MongoClient client = new MongoClient(settings);
 
-                // Check if the server is up and accessible
                 client.ListDatabaseNames();
 
-                // If no exception is thrown, connection is successful
                 IMongoDatabase database = client.GetDatabase("RFID");
                 collection = database.GetCollection<BsonDocument>("data");
             }
@@ -43,8 +47,8 @@ namespace rfid
             {
 
                 serialPort = new SerialPort("COM4", 9600);
-                serialPort.Encoding = Encoding.ASCII; // or Encoding.ASCII, Encoding.UTF7, Encoding.UTF32, etc.
-                                                      // Change COM4 to the appropriate port
+                serialPort.Encoding = Encoding.ASCII; 
+                                                      
                 serialPort.DataReceived += SerialPort_DataReceived;
                 serialPort.Open();
             }
@@ -79,25 +83,22 @@ namespace rfid
 
             if (document != null)
             {
-                // Update attendance for the student
                 var updateFilter = Builders<BsonDocument>.Filter.Eq("_id", document["_id"]);
                 var update = Builders<BsonDocument>.Update.Push("attendance", new BsonDocument
         {
             { "dateTime", DateTime.Now },
             { "subname", subname.ToUpper() }
-        }); // Add an object containing dateTime and subname to the attendance array
+        }); 
                 collection.UpdateOne(updateFilter, update);
 
-                // Update textbox1 with the name
                 UpdateTextBox(textBox1, document["name"].AsString);
-                // Update textbox2 with "Success"
                 UpdateTextBox(textBox2, "Success");
 
                 return document["name"].AsString;
             }
             else
             {
-                Console.WriteLine("No document found for RFID tag: " + rfidTag); // Debug statement
+                Console.WriteLine("No document found for RFID tag: " + rfidTag); 
                 return "RFID Tag not found in database";
             }
         }
@@ -109,7 +110,7 @@ namespace rfid
                 Invoke(new Action<string>(UpdateTextBox), text);
                 return;
             }
-            textBox1.Text = text; // Display the name in textbox1
+            textBox1.Text = text; 
         }
 
         private void UpdateTextBox(TextBox textBox, string text)
@@ -124,16 +125,13 @@ namespace rfid
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Check if Form1 is being closed intentionally
             if (this.Visible)
             {
-                // Close the serial port
                 if (serialPort != null && serialPort.IsOpen)
                 {
                     serialPort.Close();
                 }
 
-                // Exit the application
                 Application.Exit();
             }
         }
