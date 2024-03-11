@@ -24,7 +24,7 @@ namespace rfid
             {
                 string jsonString = File.ReadAllText("E:\\arduino-nano\\rfid_app\\rfid\\appsettings.json");
 
-                int startIndex = jsonString.IndexOf("ConnectionString") + "ConnectionString".Length + 4; // Add 4 for ": ": characters
+                int startIndex = jsonString.IndexOf("ConnectionString") + "ConnectionString".Length + 4;
                 int endIndex = jsonString.IndexOf('"', startIndex);
 
                 string connectionString = jsonString.Substring(startIndex, endIndex - startIndex);

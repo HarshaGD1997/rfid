@@ -23,28 +23,24 @@ namespace rfid
             if (string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 MessageBox.Show("Please enter a value in the text field.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return; // Stop the execution of the method
+                return; 
             }
             Form1 form1 = new Form1(textBox1.Text);
 
-            // Show Form1
+   
             form1.Show();
 
-            // Optionally, you can hide the current form
             this.Hide();
         }
 
 
         private void home_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // Check if the form is closing intentionally (not due to Application.Exit())
             if (e.CloseReason != CloseReason.ApplicationExitCall)
             {
-                // Hide the form instead of closing it
                 e.Cancel = true;
                 this.Hide();
             }
         }
     }
 }
-
